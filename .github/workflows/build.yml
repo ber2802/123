@@ -14,11 +14,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
 
       - name: Install roothide Theos
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
-          bash -c "$(curl -fsSL https://raw.githubusercontent.com/roothide/theos/master/bin/install-theos)"
+          for i in 1 2 3; do
+            bash -c "$(curl -fsSL https://raw.githubusercontent.com/roothide/theos/master/bin/install-theos)" && break
+            if [ "$i" = "3" ]; then
+              exit 1
+            fi
+            sleep 20
+          done
 
       - name: Build package
         run: |
